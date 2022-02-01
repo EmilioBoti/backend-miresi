@@ -7,7 +7,7 @@ const port = 3000
 const hostname = "192.168.1.129"
 const hostname2 = "https://miresi-chat.herokuapp.com/"
 
-const server = app.listen(port, hostname,()=>{
+const server = app.listen(port, hostname2,()=>{
     console.log(`listenning on port: ${port}`)
 })
 
