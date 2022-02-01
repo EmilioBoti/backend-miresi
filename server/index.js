@@ -7,7 +7,10 @@ const port = 3000
 const hostname = "192.168.1.129"
 const hostname2 = "https://miresi-chat.herokuapp.com/"
 
-const server = app.listen(port, hostname2,()=>{
+//settings 
+app.set('port', process.env.PORT || 3000)
+
+const server = app.listen(app.get('port'),()=>{
     console.log(`listenning on port: ${port}`)
 })
 
