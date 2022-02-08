@@ -10,7 +10,7 @@ app.set('port', process.env.PORT || 3000)
 
 const hostname2 = app.get('port')
 
-const server = app.listen(port, hostname,()=>{
+const server = app.listen(hostname2,()=>{
     console.log(`listenning on port: ${port}`)
 })
 
