@@ -15,7 +15,7 @@ const objEncrypt =  encrypt.encrypting("holaaaa")
 //settings 
 app.set('port', process.env.PORT || 3000)
 
-const server = app.listen(port, hostname,()=>{
+const server = app.listen(hostname2,()=>{
     console.log(`listenning on port: ${port}`)
     console.log(objEncrypt.content)
     console.log(encrypt.decrypt(objEncrypt))
