@@ -8,12 +8,12 @@ const mysql = require("./dbConnect")
 
 const port = 3000
 const hostname = "192.168.32.244"
-const hostname2 = app.get('port')
 
 const objEncrypt =  encrypt.encrypting("holaaaa")
 
 //settings 
 app.set('port', process.env.PORT || 3000)
+const hostname2 = app.get('port')
 
 const server = app.listen(hostname2,()=>{
     console.log(`listenning on port: ${port}`)
