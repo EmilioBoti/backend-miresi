@@ -1,12 +1,12 @@
 
 const mysql = require("mysql")
 
-const connectionDb = mysql.createConnection({
-    host: "sql11.freemysqlhosting.net",
-    port: 3306,
-    user: "sql11471646",
-    password: "WirNQflQBL",
-    database: "sql11471646",
+const connectionDb = mysql.createPool({
+    connectionLimit: 40,
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "miresidb",
 })
 
 module.exports = connectionDb

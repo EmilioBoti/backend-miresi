@@ -1,37 +1,6 @@
-const express = require("express");
-const socket = require("socket.io")
-const router = require("./router/router")
+const { io } = require("../index")
 const mysql = require("./dbConnect");
-const fs = require("fs")
 
-const app = express()
-
-const port = 3000
-const hostname = "192.168.33.105"
-
-const allFileContents = fs.readFileSync('C:/Users/emili/Desktop/MiResiResearch.csv', 'utf-8');
-
-allFileContents.split(/\r?\n/).forEach(line =>  {
-    const lineFile = line.split(",")
-    console.log(lineFile);
-});
-const used = process.memoryUsage().heapUsed / 1024 / 1024;
-console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
-
-//settings 
-app.set('port', process.env.PORT || 3000)
-const hostname2 = app.get('port')
-
-//middlewares
-app.use(express.json())
-app.use('/api', router)
-
-const server = app.listen(hostname2,()=>{
-    console.log(`listenning on port: ${port}`)
-})
-
-const io = socket(server)
-const dataUser = [] 
 
 io.on("connection", (socket)=>{
     let idSocket = socket.id
