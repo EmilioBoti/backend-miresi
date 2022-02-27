@@ -9,9 +9,9 @@ const router = app.Router()
 //get image
 router.get("/image", (req, res)=>{
     const pathImg = `${process.cwd()}/server/assets/madrid.jpg`
-    getAllImage(`${process.cwd()}\\server\\assets`, pathImg)
+    // getAllImage(`${process.cwd()}\\server\\assets`, pathImg)
     console.log(`path is ${process.cwd()}`)
-    return res.sendFile(pathImg)
+    return res.send(pathImg)
 })
 
 const getAllImage = (pathDir, pathImg)=>{
