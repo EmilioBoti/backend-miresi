@@ -2,22 +2,9 @@ const express = require("express");
 const socket = require("socket.io")
 const router = require("./router/router")
 const mysql = require("./dbConnect");
-// const fs = require("fs")
 
 const app = express()
 const port = 3000
-
-// const allFileContents = fs.readFileSync('C:/Users/emili/Desktop/MiResiResearch.csv', 'utf-8');
-
-
-// allFileContents.split(/\r?\n/).forEach( (line, index) =>  {
-//     const lineFile = line.split(",")
-//     console.log(lineFile)
-//     if(index === 7 )
-//         console.log("ok")
-// });
-
-// console.log(dir)
 
 //settings 
 app.set('port', process.env.PORT || port)
@@ -25,6 +12,7 @@ const hostname2 = app.get('port')
 
 //middlewares
 app.use(express.static("public"))
+app.use(express.static("assets"))
 app.use(express.json())
 app.use('/api', router)
 

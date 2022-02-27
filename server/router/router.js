@@ -2,9 +2,28 @@ const app = require("express")
 const mysql = require("../dbConnect");
 const encrypt = require("../encrypting")
 const path = require("path")
+const fs = require("fs")
 
 const router = app.Router()
 
+//get image
+router.get("/image", (req, res)=>{
+    const pathImg = `${process.cwd()}/server/assets/madrid.jpg`
+    getAllImage(`${process.cwd()}\\server\\assets`, pathImg)
+    // console.log(`path is ${process.cwd()}`)
+    return res.sendFile(pathImg)
+})
+
+const getAllImage = (pathDir, pathImg)=>{
+    const images = []
+
+    const allImg = fs.readdirSync(pathDir)
+    allImg.forEach((elem, index)=>{
+        let fileLocation = path.join(pathDir, elem)
+        images.push(fileLocation)
+    })
+    console.log(images)
+}
 //endpoints
 router.post('/v1/login', (req, res)=>{
 
@@ -21,13 +40,6 @@ router.post('/v1/login', (req, res)=>{
         }
         return res.json({ "allow": false, "id": null, "name": null, "email": null })  
     })
-})
-
-//get image
-router.get("/image", (req, res)=>{
-    const p = path.dirname(`assets//student_housing.jpg`)
-    console.log(`path is ${process.cwd()}`)
-    return res.sendFile(`${process.cwd()}\\server\\assets\\student_housing.jpg`)
 })
 
 router.get("/v1/chat/:idSender", (req, res)=>{
