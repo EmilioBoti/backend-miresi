@@ -1,6 +1,7 @@
 const app = require("express")
 const mysql = require("../dbConnect");
 const encrypt = require("../encrypting")
+const path = require("path")
 
 const router = app.Router()
 
@@ -13,14 +14,18 @@ router.post('/v1/login', (req, res)=>{
     mysql.query(query, (err, result)=>{
         if(err) throw err
 
-        if(result.length !== 0){
+        if(result.length != 0){
             const hash = { "iv": result[0].iv, "content": result[0].password }
             const decryting = encrypt.decrypt(hash)
-            
-            if(decryting === client.password) return res.json({"allow":true ,"id": result[0].id,"name": result[0].name,"email": result[0].email})       
+            if(decryting !== client.password)return res.json({"allow":true ,"id": result[0].id,"name": result[0].name,"email": result[0].email})
         }
         return res.json({ "allow": false, "id": null, "name": null, "email": null })  
     })
+})
+
+//get image
+router.get("/image", (req, res)=>{
+    return res.sendFile(`${process.cwd()}\\server\\assets\\student_housing.jpg`)
 })
 
 router.get("/v1/chat/:idSender", (req, res)=>{
