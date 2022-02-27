@@ -25,6 +25,8 @@ router.post('/v1/login', (req, res)=>{
 
 //get image
 router.get("/image", (req, res)=>{
+    const p = path.dirname(`assets//student_housing.jpg`)
+    console.log(`path is ${process.cwd()}`)
     return res.sendFile(`${process.cwd()}\\server\\assets\\student_housing.jpg`)
 })
 
