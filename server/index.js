@@ -1,24 +1,11 @@
-const express = require("express");
+require("dotenv").config()
+
+const app = require("./app")
 const socket = require("socket.io")
-const router = require("./router/router")
-const mysql = require("./dbConnect");
-
-const app = express()
-const port = 3000
-
-//settings 
-app.set('port', process.env.PORT || port)
 const hostname2 = app.get('port')
 
-//middlewares
-app.use(express.static("public"))
-app.use(express.static("assets"))
-app.use(express.json())
-app.use('/api', router)
-
-
 const server = app.listen(hostname2,()=>{
-    console.log(`listenning on port: ${port}`)
+    console.log(`listenning on port: ${hostname2}`)
 })
 
 const io = socket(server)
@@ -34,7 +21,6 @@ io.on("connection", (socket)=>{
     }
     
     console.log(`User has connected: ${idSocket}`)
-    // console.log(socket)
 
     socket.on("user", (data)=>{
         const obj = JSON.parse(data)
