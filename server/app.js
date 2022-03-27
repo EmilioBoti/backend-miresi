@@ -63,6 +63,4 @@ function insertRoomType(){
     }
 }
 
-
-
 module.exports = app

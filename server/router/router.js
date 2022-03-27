@@ -137,6 +137,37 @@ router.get('/v1/user/:id/:soId', (req, res)=>{
     }    
 })
 
+//get users
+router.get('/v1/users/:senderId/:receiverId', (req, res)=>{
+    try {
+        const query = `SELECT id, name, email, socketId FROM users WHERE (id = '${req.params.senderId}') OR (id = '${req.params.receiverId}')`
+
+        mysql.query(query, (err, result)=>{
+            if(err) throw err
+            console.log(result)
+            return res.json(result)
+        })
+
+    } catch (error) {
+        res.json(null)        
+    }
+})
+
+//get a single user
+router.get('/v1/user/:id', (req, res)=>{
+    try {
+        const query = `SELECT id, name, email, socketId FROM users WHERE id = '${req.params.id}'`
+
+        mysql.query(query, (err, result)=>{
+            if(err) throw err
+            return res.json(result)
+        })
+
+    } catch (error) {
+        res.json(null)        
+    }
+})
+
 router.post('/v1/login', (req, res)=>{
 
     const user = req.body
@@ -151,7 +182,8 @@ router.post('/v1/login', (req, res)=>{
                 const decryting = encrypt.decrypt(hash)
 
                 if(decryting !== user.code_pass){
-                    return res.json({"allow":true ,"id": result[0].id,"name": result[0].name,"email": result[0].email})
+                    console.log(result)
+                    return res.json({"allow":true ,"id": result[0].id,"name": result[0].name,"email": result[0].email, "socketId": result[0].socketid})
                 } 
             }
             return res.json(null)  
@@ -192,7 +224,7 @@ router.get('/v1/chats/:idUser', (req, res)=>{
     try {
         const { idUser } = req.params // it could be req.params.idSender or req.params.idReceiver 
 
-        const query = `SELECT users.id, users.name, users.email, users.socketid FROM users as logEdUser INNER JOIN userchat ON logEdUser.id = userchat.userId
+        const query = `SELECT users.id, users.name, users.email, users.socketid as socketId FROM users as logEdUser INNER JOIN userchat ON logEdUser.id = userchat.userId
         INNER JOIN users ON users.id = userchat.otherUser
         WHERE logEdUser.id = ${idUser}`
         
@@ -206,19 +238,26 @@ router.get('/v1/chats/:idUser', (req, res)=>{
 })
 
 //get messages from a user
-router.get("/v1/chat/:idSender/:idReceiver", (req, res)=> {
-    const { idSender, idReceiver } = req.params // it could be req.params.idSender or req.params.idReceiver 
-
-    const query = `SELECT chat.id_u_sender as senderIdDb, chat.id_u_receiver as receiverIdDb,
-        users.name as who,chat.message as sms, chat.checked 
-        FROM chat INNER JOIN users ON chat.id_u_sender = users.id
-        WHERE (id_u_sender = ${idSender} AND id_u_receiver = ${idReceiver})
-        or (id_u_sender = ${idReceiver} AND id_u_receiver = ${idSender})`
+router.get("/v1/message/:from/:to", (req, res)=> {
     
-    mysql.query(query, (err, result)=>{
-        if(err) throw err
-        return res.json(result)
-    })
+    try {
+        const { from, to } = req.params // it could be req.params.idSender or req.params.idReceiver 
+
+        const query = `SELECT chat.id_u_sender as userSenderId, chat.id_u_receiver as userReceiverId,
+            users.name as fromUser,chat.message as sms, chat.checked  
+            FROM chat INNER JOIN users ON chat.id_u_sender = users.id
+            WHERE (id_u_sender = ${from} AND id_u_receiver = ${to})
+            or (id_u_sender = ${to} AND id_u_receiver = ${from})`
+        
+        mysql.query(query, (err, result)=>{
+            if(err) throw err
+            // console.log(result)
+            return res.json(result)
+        })    
+    } catch (error) {
+        return res.json(null)
+    }
+    
 })
 
 
