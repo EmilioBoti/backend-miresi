@@ -4,6 +4,7 @@ const app = require("./app")
 const socket = require("socket.io")
 const hostname2 = app.get('port')
 const mysql = require("./db/dbConnect")
+const Queries = require("./db/queries")
 
 const server = app.listen(hostname2,()=>{
     console.log(`listenning on port: ${hostname2}`)
