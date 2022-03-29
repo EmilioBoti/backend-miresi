@@ -5,8 +5,6 @@ const router = require("./router/router")
 const fs = require("fs")
 const mysql = require("./db/dbConnect")
 
-// const {cloudinaryConfig, uploader } = require("./config/cloudinaryConfig")
-
 const app = express()
 const port = 3000
 
@@ -18,7 +16,6 @@ app.use(express.static("public"))
 app.use(express.static("assets"))
 app.use(express.json())
 app.use(express.urlencoded({extended: false}));
-// app.use("*", cloudinaryConfig)
 app.use('/api', router)
 
 // insetRoom('C:\\Users\\emili\\Desktop\\MiResiResearchRooms.csv')

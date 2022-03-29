@@ -1,56 +1,32 @@
 const app = require("express")
 const mysql = require("../db/dbConnect");
 const encrypt = require("../encrypting")
+const { objt } = require("../db/queries")
 
 const router = app.Router()
 
 
 //get a particular resi
 router.get('/v1/resi/:id', (req, res)=>{
-    try {
-        const { id } = req.params
-        const query = `SELECT residence.id, residence.name AS resiName, residence.location,residence.phone_number,
-        residence.description,residence.email, residence.link, residence.library, residence.laundry, residence.gym,
-        residence.parking_bicycle, residence.parking_car,residence.parking_motorcycle, residence.id_city,
-        picturesresidence.image
-        FROM residence
-        LEFT JOIN picturesresidence ON residence.id = picturesresidence.id_residence
-        WHERE residence.id = ${id}
-        GROUP BY residence.name`
+    const { id } = req.params
 
-        mysql.query(query, (err, result)=>{
-            if(err) throw err
-            return res.json(result)
-        })
-
-    } catch (error) {
-        return res.json(null)
-    }
-
+    objt.getSingleResi(id)
+    .then( data => res.json(data))
+    .catch( err => err.message)
+    
 })
 
 
 //get rooms from a particular resi
 router.get('/v1/resirooms/:idresi', (req, res)=>{
-    try {
-        const { idresi } = req.params
-        
-        const query = `SELECT * FROM room INNER JOIN room_type ON room.id_type = room_type.id
-        INNER JOIN picture_rooms ON picture_rooms.id_room_type = room_type.id
-        INNER JOIN residence ON residence.id = room.id_resi
-        WHERE residence.id = ${idresi} 
-        GROUP BY room.id        
-        `
-        mysql.query(query, (err, result)=>{
-            if(err) throw err
-            return res.json(result)
-        })
-
-    } catch (err) {
-        return res.json(null)
-    }
-
+    const { idresi } = req.params
+    
+    objt.getResiRooms(idresi)
+    .then( result => res.json(result))
+    .catch(err => err.message)
+   
 })
+
 
 router.get('/v1/residences/:city', (req, res)=>{
 
@@ -79,17 +55,22 @@ router.get('/v1/residences/:city', (req, res)=>{
 })
 
 router.get('/city/c/:search', (req, res)=>{
-    try {
-        const { search } = req.params
-        const query = `SELECT * FROM city WHERE name LIKE '${search}%'`
-
-        mysql.query(query, (err, result)=>{
-            if(err) throw err
-            return res.json(result)
-        })
-    } catch (err) {
-        return res.json(null)
-    }
+    const { search } = req.params
+    
+    const searching = (search)=> new Promise((resolve, reject)=>{
+        try {
+            const query = `SELECT * FROM city WHERE name LIKE '${search}%'`
+    
+            mysql.query(query, (err, result)=>{
+                if(err) throw err
+                resolve(result)
+            })
+        } catch (err) {
+            reject(null)
+        }
+    })
+    searching(search).then(data => res.json(data))
+    .catch(err => err.message)
 
 })
 
