@@ -89,7 +89,7 @@ router.get('/v1/city/:id', (req, res)=>{
     }
 
 })
-//END POINTS
+//ENDPOINTS
 router.get('/v1/cities', (req, res)=>{
 
     const query =  `SELECT * FROM city`
@@ -118,38 +118,25 @@ router.get('/v1/user/:id/:soId', (req, res)=>{
     }    
 })
 
-//get users
-router.get('/v1/users/:senderId/:receiverId', (req, res)=>{
-    try {
-        const query = `SELECT id, name, email, socketId FROM users WHERE (id = '${req.params.senderId}') OR (id = '${req.params.receiverId}')`
+// //get users chats
+// router.get('/v1/users/:from/:to', (req, res)=>{
+//     const { from, to } = req.params
 
-        mysql.query(query, (err, result)=>{
-            if(err) throw err
-            console.log(result)
-            return res.json(result)
-        })
-
-    } catch (error) {
-        res.json(null)        
-    }
-})
+//     // objt.getChatMessage(from, to)
+//     // .then( data => res.json(data))
+//     // .catch(err => err.message)
+// })
 
 //get a single user
 router.get('/v1/user/:id', (req, res)=>{
-    try {
-        const query = `SELECT id, name, email, socketId FROM users WHERE id = '${req.params.id}'`
+    const id = req.params.id
 
-        mysql.query(query, (err, result)=>{
-            if(err) throw err
-            return res.json(result)
-        })
-
-    } catch (error) {
-        res.json(null)        
-    }
+    objt.getSingleUser(id)
+    .then(data => res.json(data))
+    .catch(err => err.message)
 })
 
-router.post('/v1/login', (req, res)=>{
+router.post('/v1/login', (req, res)=> {
 
     const user = req.body
     const query = `SELECT * FROM users WHERE email = '${user.email}'`
@@ -174,7 +161,7 @@ router.post('/v1/login', (req, res)=>{
     }
 })
 
-
+//not in use
 //get all cities
 router.get("/v1/cities", (req, res)=>{    
     const query = `SELECT * FROM city`
@@ -184,63 +171,38 @@ router.get("/v1/cities", (req, res)=>{
     })
 })
 
-router.get("/v1/chat/:idSender", (req, res)=>{
-    const { idSender } = req.params // it could be req.params.idSender or req.params.idReceiver 
+// router.get("/v1/chat/:idSender", (req, res)=>{
+//     const { idSender } = req.params // it could be req.params.idSender or req.params.idReceiver 
     
-    const query = `SELECT DISTINCT chats.id_u_receiver as id, users.name, users.email
-    FROM chat as chats INNER JOIN users as reg ON chats.id_u_sender = reg.id
-    INNER JOIN users ON chats.id_u_receiver = users.id
-    WHERE chats.id_u_sender = ${idSender}`
+//     const query = `SELECT DISTINCT chats.id_u_receiver as id, users.name, users.email
+//     FROM chat as chats INNER JOIN users as reg ON chats.id_u_sender = reg.id
+//     INNER JOIN users ON chats.id_u_receiver = users.id
+//     WHERE chats.id_u_sender = ${idSender}`
     
-    mysql.query(query, (err, result)=>{
-        if(err) throw err
-        return res.json(result)
-    })
-})
+//     mysql.query(query, (err, result)=>{
+//         if(err) throw err
+//         return res.json(result)
+//     })
+// })
 
 
 //get all chats of an user
-
 router.get('/v1/chats/:idUser', (req, res)=>{
-    try {
-        const { idUser } = req.params // it could be req.params.idSender or req.params.idReceiver 
-
-        const query = `SELECT users.id, users.name, users.email, users.socketid as socketId FROM users as logEdUser INNER JOIN userchat ON logEdUser.id = userchat.userId
-        INNER JOIN users ON users.id = userchat.otherUser
-        WHERE logEdUser.id = ${idUser}`
-        
-        mysql.query(query, (err, result)=>{
-            if(err) throw err
-            return res.json(result)
-        })
-    } catch (error) {
-        return res.json(null)
-    }
+    const { idUser } = req.params // it could be req.params.idSender or req.params.idReceiver 
+    
+    objt.getUserChat(idUser)
+    .then(data =>res.json(data) )
+    .catch(err => err.message)
 })
 
 //get messages from a user
 router.get("/v1/message/:from/:to", (req, res)=> {
     
-    try {
-        const { from, to } = req.params // it could be req.params.idSender or req.params.idReceiver 
-
-        const query = `SELECT chat.id_u_sender as userSenderId, chat.id_u_receiver as userReceiverId,
-            users.name as fromUser,chat.message as sms, chat.checked  
-            FROM chat INNER JOIN users ON chat.id_u_sender = users.id
-            WHERE (id_u_sender = ${from} AND id_u_receiver = ${to})
-            or (id_u_sender = ${to} AND id_u_receiver = ${from})`
-        
-        mysql.query(query, (err, result)=>{
-            if(err) throw err
-            // console.log(result)
-            return res.json(result)
-        })    
-    } catch (error) {
-        return res.json(null)
-    }
-    
+    const { from, to } = req.params
+    objt.getChatMessage(from, to)
+    .then(data => res.json(data))
+    .catch(err => err.message)
 })
-
 
 router.post("/v1/signup", (req, res)=>{
 
@@ -256,18 +218,6 @@ router.post("/v1/signup", (req, res)=>{
         console.log(result)
     })
     return res.json(userToRegister)
-})
-
-router.post("/v1/chat", (req, res)=>{
-    const message = req.body
-    
-    const query = `INSERT INTO chat (id_u_sender, id_u_receiver, message, checked)
-    VALUES ('${message.id_sender}','${message.id_receiver}', '${message.message}', '${message.chekced}')`
-    
-    mysql.query(query, (err, result)=>{
-        if(err) throw err
-        return res.json(message)
-    })
 })
 
 module.exports = router
