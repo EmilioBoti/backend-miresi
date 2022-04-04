@@ -4,7 +4,7 @@ const app = require("./app")
 const socket = require("socket.io")
 const hostname2 = app.get('port')
 const mysql = require("./db/dbConnect")
-const { Queries } = require("./db/queries")
+const { objt } = require("./db/queries")
 
 const server = app.listen(hostname2,()=>{
     console.log(`listenning on port: ${hostname2}`)
@@ -16,13 +16,13 @@ io.on("connection", (socket)=> {
     let idSocket = socket.id
     
     console.log(`User has connected: ${idSocket}`)
-
+    
     socket.on("user", (id, socketId)=>{
-        Queries.updateSockectIt(id, socketId)
+        objt.updateSockectIt(id, socketId)
     })
     
     //events happen when a message is send
-     socket.on("message", async (data) => {
+    socket.on("message", async (data) => {
         let message = JSON.parse(data)
         
         insertMessage(message)
@@ -46,13 +46,11 @@ const insertMessage = (message) => new Promise((resolve, reject)=> {
     }
 })
 
-
-function returnMessage(idSender,idReceiver,message){
-
+function returnMessage(idSender,idReceiver,message) {
     const query = `SELECT id, name, socketid FROM users WHERE id = ${idSender} OR id = ${idReceiver}`
     let sms = message
     
-    mysql.query(query, (err, result)=> {
+    mysql.query(query, (err, result) => {
         if(err) throw err
         const senderObj = result.find((elem) => elem.id == idSender)
         const message = { 

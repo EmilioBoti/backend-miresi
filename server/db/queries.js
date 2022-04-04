@@ -1,8 +1,50 @@
 const mysql =  require("./dbConnect")
+const encrypt = require("../encrypting")
 
-class Queries {
-   
-    static updateSockectIt(userId, socketId){
+
+const validUser = (result, user) => {
+    if(result.length != 0){
+        const hash = { "iv": result[0].iv, "content": result[0].code_pass }
+        const decryting = encrypt.decrypt(hash)
+
+        if(decryting !== user.code_pass){
+            return {"allow":true ,"id": result[0].id,"name": result[0].name,"email": result[0].email, "socketId": result[0].socketid}
+        }else return null 
+    }
+}
+
+const objt = {
+
+    login: (user) => new Promise((resolve, reject)=>{
+        try{
+            const query = `SELECT * FROM users WHERE email = '${user.email}'`
+            mysql.query(query, (err, result)=>{
+                if(err) throw err
+                resolve(validUser(result, user))
+            })
+        }catch(err){
+            reject(null)
+        }
+    }),
+    signUp: (user) => new Promise((resolve, reject)=>{
+
+        try {
+            const encryptPW = encrypt.encrypting(user.password) 
+            user.password = encryptPW.content
+            
+            const query = `INSERT INTO users (name, email, code_pass, socketid ,iv)
+            VALUES ('${user.name}','${user.email}', '${user.password}','dafgdsg','${encryptPW.iv}')`
+            
+            mysql.query(query, (err, result)=>{
+                if(err) throw err
+                resolve(user)
+            })
+        } catch (error) {
+            reject(null)            
+        }
+    }),
+
+    updateSockectIt: (userId, socketId)=>{
         try {
             const query = `UPDATE users SET socketId = '${socketId}' WHERE id = ${userId}`
             mysql.query(query, (err, result)=>{
@@ -12,12 +54,29 @@ class Queries {
         } catch (error) {
             console.error(error)
         }
-    }
+    },
+    getResiFromCity: (city)=> new Promise(( resolve,reject)=>{
+        try {
+            const query = `SELECT residence.id, residence.name AS resiName, residence.location,residence.phone_number,
+            residence.description,residence.email, residence.link, residence.library, residence.laundry, residence.gym,
+            residence.parking_bicycle, residence.parking_car,residence.parking_motorcycle, residence.id_city,
+            picturesresidence.image, stackfavourite.id_residence as idResiFavorite, stackfavourite.id_user as idUser,
+            MIN(room.price) as priceFrom 
+            FROM residence INNER JOIN city ON residence.id_city = city.id
+            LEFT JOIN stackfavourite ON stackfavourite.id_residence = residence.id
+            LEFT JOIN picturesresidence ON picturesresidence.id_residence = residence.id
+            LEFT JOIN room ON room.id_resi = residence.id
+            WHERE city.name = '${city}'
+            GROUP BY resiName`
 
-}
-
-const objt = {
-
+            mysql.query(query, (err, result)=>{
+                if(err) throw err
+                resolve(result)
+            })
+        } catch (err) {
+            reject(null)
+        }
+    }),
     getSingleResi: (id) => new Promise((resolve, reject)=>{
         try { 
             const query = `SELECT residence.id, residence.name AS resiName, residence.location,residence.phone_number,
@@ -50,11 +109,9 @@ const objt = {
             mysql.query(query, (err, result)=>{
                 if(err) throw err
                 resolve(result)
-                // return res.json(result)
             })
         } catch (err) {
             reject(null)
-            // return res.json(null)
         }
     }),
     
@@ -104,5 +161,5 @@ const objt = {
     })
 }
 
-module.exports = {  Queries, objt }
+module.exports = { objt }
 
