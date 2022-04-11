@@ -5,7 +5,6 @@ const { objt } = require("../db/queries")
 
 const router = app.Router()
 
-
 //get a particular resi
 router.get('/v1/resi/:id', (req, res)=>{
     const { id } = req.params

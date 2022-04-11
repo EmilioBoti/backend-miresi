@@ -25,10 +25,13 @@ io.on("connection", (socket)=> {
     socket.on("message", async (data) => {
         let message = JSON.parse(data)
         
-        insertMessage(message)
-        .then( message =>{
-            returnMessage(message.from, message.to, message.sms)
-        })
+        if(message.sms != "" ){
+            insertMessage(message)
+            .then( message =>{
+                // console.log(message)
+                returnMessage(message.from, message.to, message.sms)
+            })
+        }
     })
 })
 
@@ -52,11 +55,12 @@ function returnMessage(idSender,idReceiver,message) {
     
     mysql.query(query, (err, result) => {
         if(err) throw err
-        const senderObj = result.find((elem) => elem.id == idSender)
+        const fromUser = result.find((elem) => elem.id == idSender)
+        const toUser = result.find((elem) => elem.id == idReceiver)
         const message = { 
-            userSenderId: result[0].id,
-            userReceiverId: result[1].id,
-            fromUser: senderObj.name,
+            userSenderId: fromUser.id,
+            userReceiverId: toUser.id,
+            fromUser: fromUser.name,
             sms: sms,
             checked: 0
         }

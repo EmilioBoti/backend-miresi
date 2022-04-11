@@ -1,5 +1,6 @@
 const mysql =  require("./dbConnect")
 const encrypt = require("../encrypting")
+const { stringify } = require("nodemon/lib/utils")
 
 
 const validUser = (result, user) => {
@@ -55,7 +56,7 @@ const objt = {
             console.error(error)
         }
     },
-    getResiFromCity: (city)=> new Promise(( resolve,reject)=>{
+    getResiFromCity: (city) => new Promise(( resolve,reject)=>{
         try {
             const query = `SELECT residence.id, residence.name AS resiName, residence.location,residence.phone_number,
             residence.description,residence.email, residence.link, residence.library, residence.laundry, residence.gym,
@@ -121,11 +122,17 @@ const objt = {
                 users.name as fromUser,chat.message as sms, chat.checked  
                 FROM chat INNER JOIN users ON chat.id_u_sender = users.id
                 WHERE (id_u_sender = ${from} AND id_u_receiver = ${to})
-                or (id_u_sender = ${to} AND id_u_receiver = ${from})`
+                or (id_u_sender = ${to} AND id_u_receiver = ${from})
+                ORDER BY chat.date
+                `
             
-            mysql.query(query, (err, result)=>{
+            mysql.query(query, (err, result)=> {
                 if(err) throw err
-                resolve(result)
+                const arr = result.map( element => {
+                    element.sms = stringify(element.sms) 
+                    return element
+                });
+                resolve(arr)
             })    
         } catch (error) {
             reject(null)
