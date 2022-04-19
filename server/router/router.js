@@ -5,6 +5,13 @@ const { objt } = require("../db/queries")
 
 const router = app.Router()
 
+
+router.get('/v1/posts', (req, res)=>{
+    objt.getAllPost()
+    .then(data => res.json(data))
+    .catch( err => err.message)
+})
+
 //get a particular resi
 router.get('/v1/resi/:id', (req, res)=>{
     const { id } = req.params
@@ -100,16 +107,6 @@ router.post('/v1/login', (req, res)=> {
     
 })
 
-//not in use
-//get all cities
-router.get("/v1/cities", (req, res)=>{    
-    const query = `SELECT * FROM city`
-    mysql.query(query, (err, result)=>{
-        if(err) throw err
-        return res.json(result)
-    })
-})
-
 //get all chats of an user
 router.get('/v1/chats/:idUser', (req, res)=>{
     const { idUser } = req.params // it could be req.params.idSender or req.params.idReceiver 
@@ -137,4 +134,11 @@ router.post("/v1/signup", (req, res)=> {
     
 })
 
+router.post('/v1/createPost', (req, res) => {
+    const post = req.body
+    console.log(post)
+    objt.createPost(post)
+    .then( data => res.json(data))
+    .catch(err=> err.message)
+})
 module.exports = router

@@ -18,17 +18,16 @@ io.on("connection", (socket)=> {
     console.log(`User has connected: ${idSocket}`)
     
     socket.on("user", (id, socketId)=>{
+        console.log(id)
         objt.updateSockectIt(id, socketId)
     })
     
     //events happen when a message is send
-    socket.on("message", async (data) => {
+    socket.on("message", (data) => {
         let message = JSON.parse(data)
-        
-        if(message.sms != "" ){
+        if(message.sms != "" && message.from !== 0){
             insertMessage(message)
             .then( message =>{
-                // console.log(message)
                 returnMessage(message.from, message.to, message.sms)
             })
         }
@@ -37,14 +36,14 @@ io.on("connection", (socket)=> {
 
 const insertMessage = (message) => new Promise((resolve, reject)=> {
     try {
-        const query = `INSERT INTO chat (id_u_sender, id_u_receiver, message, date ,checked)
+        const query = `INSERT INTO chat (id_u_sender, id_u_receiver, message, date, checked)
             VALUES ('${message.from}','${message.to}', "${message.sms}", CURRENT_TIMESTAMP(),'${message.check}')`
             
         mysql.query(query, (err, result)=>{        
             if(err) throw err
             resolve(message)
         })
-    } catch (error) {
+    } catch (error) { 
         reject(null)
     }
 })
@@ -55,6 +54,7 @@ function returnMessage(idSender,idReceiver,message) {
     
     mysql.query(query, (err, result) => {
         if(err) throw err
+        console.log(result)
         const fromUser = result.find((elem) => elem.id == idSender)
         const toUser = result.find((elem) => elem.id == idReceiver)
         const message = { 
