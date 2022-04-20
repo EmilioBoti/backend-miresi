@@ -5,6 +5,7 @@ const socket = require("socket.io")
 const hostname2 = app.get('port')
 const mysql = require("./db/dbConnect")
 const { objt } = require("./db/queries")
+const chatQuery = require("./db/chatQuery")
 
 const server = app.listen(hostname2,()=>{
     console.log(`listenning on port: ${hostname2}`)
@@ -23,13 +24,21 @@ io.on("connection", (socket)=> {
     })
     
     //events happen when a message is send
-    socket.on("message", (data) => {
+    socket.on("message", async (data) => {
         let message = JSON.parse(data)
         if(message.sms != "" && message.from !== 0){
-            insertMessage(message)
-            .then( message =>{
-                returnMessage(message.from, message.to, message.sms)
-            })
+            const chatBefore = await chatQuery.isContact(message.from, message.to)
+            console.log(chatBefore)
+            if(chatBefore.length !== 0){
+                insertMessage(message)
+                .then( message =>{
+                    returnMessage(message.from, message.to, message.sms)
+                })
+            }else {
+                Promise.all([chatQuery.insertUserChat(message.from, message.to), chatQuery.insertUserChat(message.to, message.from)])
+                .then( data => insertMessage(message)
+                .then( message => { returnMessage(message.from, message.to, message.sms) }))
+            }
         }
     })
 })

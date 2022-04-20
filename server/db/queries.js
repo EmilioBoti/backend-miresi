@@ -185,7 +185,7 @@ const objt = {
         }
     }),
 
-    getSingleUser: (id)=>new Promise((resolve, reject)=>{
+    getSingleUser: (id) => new Promise((resolve, reject)=>{
         try {
             const query = `SELECT id, name, email, socketId FROM users WHERE id = '${id}'`
     
