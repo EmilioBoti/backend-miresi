@@ -22,7 +22,7 @@ app.use('/api', router)
 
 //'C:\\Users\\emili\\Desktop\\MiResiResearchTypeofRooms.csv'
 
-function insetRoom(path){
+function insetRoom(path) {
     const allFileContents = fs.readFileSync(path, 'utf-8');
     const lines = allFileContents.split(/\r?\n/)
 
@@ -44,7 +44,7 @@ function insetRoom(path){
 }
 
 //not part of the code
-function insertRoomType(){
+function insertRoomType() {
     const allFileContents = fs.readFileSync('C:\\Users\\emili\\Desktop\\MiResiResearchTypeofRooms.csv', 'utf-8');
     const lines = allFileContents.split(/\r?\n/)
     

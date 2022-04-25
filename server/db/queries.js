@@ -33,11 +33,11 @@ const objt = {
             const encryptPW = encrypt.encrypting(user.password) 
             user.password = encryptPW.content
             
-            const query = `INSERT INTO users (name, email, code_pass, socketid ,iv)
-            VALUES ('${user.name}','${user.email}', '${user.password}','dafgdsg','${encryptPW.iv}')`
+            const query = `INSERT INTO users (name, email, code_pass, socketid, iv)
+            VALUES ('${user.name}','${user.email}', '${user.password}','d','${encryptPW.iv}')`
             
             mysql.query(query, (err, result)=>{
-                if(err) throw err
+                if(err) reject(null)
                 resolve(user)
             })
         } catch (error) {
@@ -53,12 +53,33 @@ const objt = {
             
             mysql.query(query, (err, result) => {
                 if(err) throw err
-                resolve(post) 
+                resolve(true) 
             })
         } catch (error) {
             reject(false)            
         }
     }),
+
+    getComments: (id)=> new Promise((resolve, reject)=>{
+
+        const query = `SELECT users.id, users.name, resi_comments.resi_id as resiId,resi_comments.comments,
+        resi_comments.create_date as dateCreated 
+        FROM resi_comments 
+        INNER JOIN users ON users.id = resi_comments.user_id
+        WHERE resi_comments.resi_id = ${id}`
+
+        try {
+            mysql.query(query, (err, result)=>{
+                if(err) throw err
+                resolve(result)
+            })
+
+        } catch (error) {
+            reject(null)
+        }
+
+    }),
+
     getAllPost: () => new Promise((resolve, reject) => {
         
         const query = `SELECT post.id as postId,room.id as roomId,room.name as roomName,room.price,

@@ -6,6 +6,13 @@ const { objt } = require("../db/queries")
 const router = app.Router()
 
 
+router.get('/v1/comments/:id', (req, res)=>{
+    const id = req.params.id
+    objt.getComments(id)
+    .then(data => res.json(data))
+    .catch(err => err.message)
+})
+
 router.get('/v1/posts', (req, res)=>{
     objt.getAllPost()
     .then(data => res.json(data))
@@ -130,7 +137,7 @@ router.post("/v1/signup", (req, res)=> {
     const user = req.body
     objt.signUp(user)
     .then(data => res.json(data))
-    .catch(err => err.message)
+    .catch(err => null)
     
 })
 
