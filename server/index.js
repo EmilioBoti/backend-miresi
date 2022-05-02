@@ -14,12 +14,8 @@ const server = app.listen(hostname2,()=>{
 const io = socket(server)
 
 io.on("connection", (socket)=> {
-    let idSocket = socket.id
-    
-    console.log(`User has connected: ${idSocket}`)
-    
+        
     socket.on("user", (id, socketId)=>{
-        console.log(id)
         objt.updateSockectIt(id, socketId)
     })
     
@@ -28,7 +24,6 @@ io.on("connection", (socket)=> {
         let message = JSON.parse(data)
         if(message.sms != "" && message.from !== 0){
             const chatBefore = await chatQuery.isContact(message.from, message.to)
-            console.log(chatBefore)
             if(chatBefore.length !== 0){
                 insertMessage(message)
                 .then( message =>{
@@ -63,7 +58,6 @@ function returnMessage(idSender,idReceiver,message) {
     
     mysql.query(query, (err, result) => {
         if(err) throw err
-        console.log(result)
         const fromUser = result.find((elem) => elem.id == idSender)
         const toUser = result.find((elem) => elem.id == idReceiver)
         const message = { 

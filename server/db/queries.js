@@ -16,6 +16,36 @@ const validUser = (result, user) => {
 
 const objt = {
 
+    addFavourite: (favourite) => new Promise((resolve, reject)=>{
+
+        try {     
+            const query = `INSERT INTO stackfavourite (id_user, id_residence)
+            VALUES(${favourite.userId},${favourite.resiId})`
+            
+            mysql.query(query, (err, result)=>{
+                if(err) reject(false)
+                resolve(true)
+            })
+        } catch (error) {
+            reject(false)            
+        }
+    }),
+
+    removeFavourite: (favourite) => new Promise((resolve, reject)=>{
+
+        try {     
+            const query = `DELETE FROM stackfavourite
+            WHERE id_user = ${favourite.userId} AND id_residence = ${favourite.resiId}`
+            
+            mysql.query(query, (err, result)=>{
+                if(err) reject(null)
+                resolve(true)
+            })
+        } catch (error) {
+            reject(null)            
+        }
+    }),
+
     login: (user) => new Promise((resolve, reject)=>{
         try{
             const query = `SELECT * FROM users WHERE email = '${user.email}'`
@@ -27,6 +57,7 @@ const objt = {
             reject(null)
         }
     }),
+    
     signUp: (user) => new Promise((resolve, reject)=>{
 
         try {
@@ -44,7 +75,7 @@ const objt = {
             reject(null)            
         }
     }),
-
+    
     createPost: (post) => new Promise((resolve, reject) => {
         
         try {
@@ -59,14 +90,16 @@ const objt = {
             reject(false)            
         }
     }),
-
-    getComments: (id)=> new Promise((resolve, reject)=>{
-
-        const query = `SELECT users.id, users.name, resi_comments.resi_id as resiId,resi_comments.comments,
-        resi_comments.create_date as dateCreated 
+    
+    getComments: (id,limit)=> new Promise((resolve, reject)=>{
+        
+        const query = `SELECT users.id as userId, users.name as userName, resi_comments.resi_id as resiId,resi_comments.comments,
+        DATE_FORMAT(resi_comments.create_date,'%d/%m/%Y') as dateCreated 
         FROM resi_comments 
         INNER JOIN users ON users.id = resi_comments.user_id
-        WHERE resi_comments.resi_id = ${id}`
+        WHERE resi_comments.resi_id = ${id}
+        LIMIT ${limit}
+        `
 
         try {
             mysql.query(query, (err, result)=>{
@@ -113,7 +146,6 @@ const objt = {
             const query = `UPDATE users SET socketId = '${socketId}' WHERE id = ${userId}`
             mysql.query(query, (err, result)=>{
                 if(err) throw err
-                // console.log(result)
             })    
         } catch (error) {
             console.error(error)
@@ -125,11 +157,13 @@ const objt = {
             residence.description,residence.email, residence.link, residence.library, residence.laundry, residence.gym,
             residence.parking_bicycle, residence.parking_car,residence.parking_motorcycle, residence.id_city,
             picturesresidence.image, stackfavourite.id_residence as idResiFavorite, stackfavourite.id_user as idUser,
+            stackfavourite.id_user as favouriteIdU,
             MIN(room.price) as priceFrom 
             FROM residence INNER JOIN city ON residence.id_city = city.id
             LEFT JOIN stackfavourite ON stackfavourite.id_residence = residence.id
             LEFT JOIN picturesresidence ON picturesresidence.id_residence = residence.id
             LEFT JOIN room ON room.id_resi = residence.id
+            LEFT JOIN users ON users.id = stackfavourite.id_user
             WHERE city.name = '${city}'
             GROUP BY resiName`
 

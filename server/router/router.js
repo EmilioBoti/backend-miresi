@@ -1,22 +1,47 @@
 const app = require("express")
 const mysql = require("../db/dbConnect");
-// const encrypt = require("../encrypting")
 const { objt } = require("../db/queries")
+const forumQuery = require('../db/forumQuery')
 
 const router = app.Router()
 
 
-router.get('/v1/comments/:id', (req, res)=>{
-    const id = req.params.id
-    objt.getComments(id)
+
+router.post('/v1/addfavourite', (req, res)=>{
+    const favourite = req.body
+    objt.addFavourite(favourite)
+    .then(data => res.json(data))
+    .catch(err => err.message)
+
+})
+
+router.post('/v1/removefavourite', (req, res)=>{
+    const favourite = req.body
+    objt.removeFavourite(favourite)
+    .then(data => res.json(data))
+    .catch(err => err.message)
+
+})
+
+router.get('/v1/forums', (req, res)=>{
+    forumQuery.getForums()
     .then(data => res.json(data))
     .catch(err => err.message)
 })
 
+router.get('/v1/comments/:id/:limit', (req, res) => {
+    const id = req.params.id
+    const limit = req.params.limit
+
+    objt.getComments(id,limit)
+        .then(data => res.json(data))
+        .catch(err => err.message)
+})
+
 router.get('/v1/posts', (req, res)=>{
     objt.getAllPost()
-    .then(data => res.json(data))
-    .catch( err => err.message)
+        .then(data => res.json(data))
+        .catch( err => err.message)
 })
 
 //get a particular resi
@@ -24,8 +49,8 @@ router.get('/v1/resi/:id', (req, res)=>{
     const { id } = req.params
 
     objt.getSingleResi(id)
-    .then( data => res.json(data))
-    .catch( err => err.message)
+        .then( data => res.json(data))
+        .catch( err => err.message)
     
 })
 
@@ -34,16 +59,16 @@ router.get('/v1/resirooms/:idresi', (req, res)=>{
     const { idresi } = req.params
     
     objt.getResiRooms(idresi)
-    .then( result => res.json(result))
-    .catch(err => err.message)
+        .then( result => res.json(result))
+        .catch(err => err.message)
    
 })
 
 router.get('/v1/residences/:city', (req, res)=>{
         const { city } = req.params
         objt.getResiFromCity(city)
-        .then( data => res.json(data))
-        .catch(err=> err.message)
+            .then( data => res.json(data))
+            .catch(err=> err.message)
 })
 
 router.get('/city/c/:search', (req, res)=>{
@@ -143,7 +168,6 @@ router.post("/v1/signup", (req, res)=> {
 
 router.post('/v1/createPost', (req, res) => {
     const post = req.body
-    console.log(post)
     objt.createPost(post)
     .then( data => res.json(data))
     .catch(err=> err.message)
