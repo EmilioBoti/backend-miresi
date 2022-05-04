@@ -6,6 +6,7 @@ const hostname2 = app.get('port')
 const mysql = require("./db/dbConnect")
 const { objt } = require("./db/queries")
 const chatQuery = require("./db/chatQuery")
+const dayjs = require("dayjs")
 
 const server = app.listen(hostname2,()=>{
     console.log(`listenning on port: ${hostname2}`)
@@ -60,13 +61,17 @@ function returnMessage(idSender,idReceiver,message) {
         if(err) throw err
         const fromUser = result.find((elem) => elem.id == idSender)
         const toUser = result.find((elem) => elem.id == idReceiver)
+        let time = dayjs().format('HH:mm a')
+
         const message = { 
             userSenderId: fromUser.id,
             userReceiverId: toUser.id,
             fromUser: fromUser.name,
             sms: sms,
+            time: time,
             checked: 0
         }
+        console.log(message)
         //emit events to both socket sender and receiver
         io.to(result[1].socketid).to(result[0].socketid).emit("private", JSON.stringify(message))
     })

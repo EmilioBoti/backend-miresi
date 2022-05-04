@@ -1,7 +1,8 @@
 const app = require("express")
 const mysql = require("../db/dbConnect");
 const { objt } = require("../db/queries")
-const forumQuery = require('../db/forumQuery')
+const forumQuery = require('../db/forumQuery');
+const chatQuery = require("../db/chatQuery");
 
 const router = app.Router()
 
@@ -152,7 +153,7 @@ router.get('/v1/chats/:idUser', (req, res)=>{
 router.get("/v1/message/:from/:to", (req, res)=> {
     
     const { from, to } = req.params
-    objt.getChatMessage(from, to)
+    chatQuery.getChatMessage(from, to)
     .then(data => res.json(data))
     .catch(err => err.message)
 })

@@ -15,6 +15,7 @@
   "dependencies": {
     "cloudinary": "^1.28.1",
     "crypto": "^1.0.1",
+    "dayjs": "^1.11.1",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "multer": "^1.4.4",
