@@ -8,7 +8,11 @@ const validUser = (result, user) => {
         const decryting = encrypt.decrypt(hash)
 
         if(decryting !== user.code_pass){
-            return {"allow":true ,"id": result[0].id,"name": result[0].name,"email": result[0].email, "socketId": result[0].socketid}
+            return {"allow":true ,"id": result[0].id,
+            "name": result[0].name,"email": result[0].email,
+            "socketId": result[0].socketid,
+            "image": result[0].image
+        }
         }else return null 
     }
 }
@@ -47,8 +51,10 @@ const objt = {
 
     login: (user) => new Promise((resolve, reject)=>{
         try{
-            const query = `SELECT * FROM users WHERE email = '${user.email}'`
-            mysql.query(query, (err, result)=>{
+            const query = `SELECT * FROM users
+            LEFT JOIN userpictures ON userpictures.user_id = users.id
+            WHERE email = '${user.email}'`
+            mysql.query(query, (err, result)=> {
                 if(err) throw err
                 resolve(validUser(result, user))
             })

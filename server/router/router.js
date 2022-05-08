@@ -8,6 +8,12 @@ const router = app.Router()
 
 
 
+router.get('/v1/categories', (req, res)=>{
+    forumQuery.getCategories()
+    .then(data => res.json(data))
+    .catch(err => err.message)
+})
+
 router.post('/v1/addfavourite', (req, res)=>{
     const favourite = req.body
     objt.addFavourite(favourite)
@@ -26,6 +32,13 @@ router.post('/v1/removefavourite', (req, res)=>{
 
 router.get('/v1/forums', (req, res)=>{
     forumQuery.getForums()
+    .then(data => res.json(data))
+    .catch(err => err.message)
+})
+
+router.get('/v1/forums/:name', (req, res)=>{
+    const name = req.params.name
+    forumQuery.getFilterForums(name)
     .then(data => res.json(data))
     .catch(err => err.message)
 })

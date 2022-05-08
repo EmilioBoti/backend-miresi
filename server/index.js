@@ -71,7 +71,6 @@ function returnMessage(idSender,idReceiver,message) {
             time: time,
             checked: 0
         }
-        console.log(message)
         //emit events to both socket sender and receiver
         io.to(result[1].socketid).to(result[0].socketid).emit("private", JSON.stringify(message))
     })
