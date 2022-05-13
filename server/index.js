@@ -5,7 +5,7 @@ const socket = require("socket.io")
 const hostname2 = app.get('port')
 const mysql = require("./db/dbConnect")
 const { objt } = require("./db/queries")
-const chatQuery = require("./db/chatQuery")
+const chatQuery = require("./queries/chat/chatQuery")
 const dayjs = require("dayjs")
 
 const server = app.listen(hostname2,()=>{
@@ -23,8 +23,9 @@ io.on("connection", (socket)=> {
     //events happen when a message is send
     socket.on("message", async (data) => {
         let message = JSON.parse(data)
-        if(message.sms != "" && message.from !== 0){
+        if(message.sms != "" && message.from !== 0) {
             const chatBefore = await chatQuery.isContact(message.from, message.to)
+            
             if(chatBefore.length !== 0){
                 insertMessage(message)
                 .then( message =>{
@@ -36,6 +37,14 @@ io.on("connection", (socket)=> {
                 .then( message => { returnMessage(message.from, message.to, message.sms) }))
             }
         }
+    })
+    
+    socket.on("postComment", (commentModel) => {
+        let comment = JSON.parse(commentModel)
+        console.log(comment)
+        objt.postComment(comment)
+            .then( data => io.emit("commentPosted", data))
+            .catch(err => err.message)
     })
 })
 

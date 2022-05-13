@@ -1,4 +1,4 @@
-const mysql =  require("./dbConnect")
+const mysql =  require("../../db/dbConnect")
 const { stringify } = require("nodemon/lib/utils")
 const dayjs = require('dayjs')
 
