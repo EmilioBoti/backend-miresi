@@ -4,7 +4,6 @@ const { objt } = require("../db/queries")
 const forumQuery = require('../queries/forums/forumQuery');
 const chatQuery = require("../queries/chat/chatQuery");
 const loginQuery = require("../queries/login/login")
-const resiQuery = require("../queries/resi/resi")
 
 const router = app.Router()
 
