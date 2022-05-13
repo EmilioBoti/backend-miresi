@@ -51,7 +51,7 @@ io.on("connection", (socket)=> {
 const insertMessage = (message) => new Promise((resolve, reject)=> {
     try {
         const query = `INSERT INTO chat (id_u_sender, id_u_receiver, message, date, checked)
-            VALUES ('${message.from}','${message.to}', "${message.sms}", CURRENT_TIMESTAMP(),'${message.check}')`
+            VALUES ('${message.from}','${message.to}', "${message.sms}", CURRENT_TIMESTAMP(),${message.check})`
             
         mysql.query(query, (err, result)=>{        
             if(err) throw err

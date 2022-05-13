@@ -5,8 +5,8 @@ const postQuery = {
     createPost: (post) => new Promise((resolve, reject) => {
         
         try {
-            const query = `INSERT INTO post (id_user, id_residences, date_end, date_start, id_room)
-            VALUES (${post.userId},${post.resiId},'${post.dateEnd}', '${post.dateStart}', ${post.roomId})`
+            const query = `INSERT INTO post (id_user, id_residences, price ,date_end, date_start, id_room)
+            VALUES (${post.userId},${post.resiId}, 0 ,'${post.dateEnd}', '${post.dateStart}', ${post.roomId})`
             
             mysql.query(query, (err, result) => {
                 if(err) throw err
