@@ -17,6 +17,20 @@ const forumQuery = {
         }
     }),
 
+    publishForum: (model) => new Promise((resolve, reject) => {
+        try {
+            const query =  `INSERT INTO forum (name, create_uid , about, resi_id, city_id, category_id, date_created)
+            VALUES ('${model.name}', ${model.creatorUser} ,"${model.about}", ${model.resiId}, ${model.cityId}, ${model.categoryId}, CURRENT_TIME)`
+            
+            mysql.query(query, (err, result)=>{
+                if(err) throw err.message
+                resolve(true)
+            })
+        } catch (error) {
+            reject(false)
+        }
+    }),
+
     getForums: () => new Promise((resolve, reject)=>{
         const query = `SELECT forum.id as forumId, forum.name as forumName,
         forum.create_uid as createrUser, forum.second_label as secondLabel,

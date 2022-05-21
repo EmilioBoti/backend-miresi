@@ -19,7 +19,7 @@ const objt = {
 
     }),
     
-    updateSockectIt: (userId, socketId)=>{
+    updateSockectIt: (userId, socketId) => {
         try {
             const query = `UPDATE users SET socketId = '${socketId}' WHERE id = ${userId}`
             mysql.query(query, (err, result)=>{
@@ -29,10 +29,10 @@ const objt = {
             console.error(error)
         }
     },
-
+    
     getSingleUser: (id) => new Promise((resolve, reject)=>{
         try {
-            const query = `SELECT id, name, email, socketId FROM users WHERE id = '${id}'`
+            const query = `SELECT id, name, email, socketId,country, gender, age FROM users WHERE id = '${id}'`
     
             mysql.query(query, (err, result)=>{
                 if(err) throw err
@@ -43,7 +43,8 @@ const objt = {
             reject(null)
         }
     }),
-    getUserChat: (id)=> new Promise((resolve, reject)=>{
+
+    getUserChat: (id)=> new Promise((resolve, reject) => {
         try {    
             const query = `SELECT users.id, users.name, users.email, userpictures.image,
             users.socketid as socketId

@@ -70,6 +70,32 @@ const resiQuery = {
 
     }),
     
+    getLimitResi: (limit) => new Promise(( resolve,reject)=>{
+        try {
+            const query = `SELECT residence.id, residence.name AS resiName, residence.location,residence.phone_number,
+            residence.description,residence.email, residence.link, residence.library, residence.laundry, residence.gym,
+            residence.parking_bicycle, residence.parking_car,residence.parking_motorcycle, residence.id_city,
+            picturesresidence.image, stackfavourite.id_residence as idResiFavorite, stackfavourite.id_user as idUser,
+            stackfavourite.id_user as favouriteIdU, city.name as city,
+            MIN(room.price) as priceFrom 
+            FROM residence
+            INNER JOIN city ON residence.id_city = city.id
+            LEFT JOIN stackfavourite ON stackfavourite.id_residence = residence.id
+            LEFT JOIN picturesresidence ON picturesresidence.id_residence = residence.id
+            LEFT JOIN room ON room.id_resi = residence.id
+            LEFT JOIN users ON users.id = stackfavourite.id_user
+            GROUP BY resiName
+            LIMIT ${limit}
+            `
+
+            mysql.query(query, (err, result)=>{
+                if(err) throw err
+                resolve(result)
+            })
+        } catch (err) {
+            reject(null)
+        }
+    }),
     getResiFromCity: (city) => new Promise(( resolve,reject)=>{
         try {
             const query = `SELECT residence.id, residence.name AS resiName, residence.location,residence.phone_number,
@@ -116,6 +142,26 @@ const resiQuery = {
         }
     }),
     
+    getRooms: (limit) => new Promise((resolve, reject)=>{
+        try {
+        
+            const query = `SELECT room.id, room.name,room.id_type, room.price, room.ac,
+            room.heating, room.fridge,room.id_resi,room_type.type_name, room_type.kitchen,
+            room_type.shared_kitchen, room_type.shared_room,room_type.shared_bathroom,
+            picture_rooms.image FROM room
+            INNER JOIN room_type ON room.id_type = room_type.id
+            LEFT JOIN picture_rooms ON picture_rooms.id_room_type = room_type.id
+            GROUP BY room.id 
+            LIMIT ${limit}       
+            `
+            mysql.query(query, (err, result)=>{
+                if(err) throw err
+                resolve(result)
+            })
+        } catch (err) {
+            reject(null)
+        }
+    }),
     getResiRooms: (id) => new Promise((resolve, reject)=>{
         try {
         

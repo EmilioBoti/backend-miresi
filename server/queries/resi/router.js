@@ -14,6 +14,23 @@ router.get('/v1/resi/:id', (req, res)=>{
     
 })
 
+router.get('/v1/rooms/:limit', (req, res) => {
+    const { limit } = req.params
+
+    resiQuery.getRooms(limit)
+    .then(data => res.json(data))
+    .catch(err => err.message)
+
+})
+router.get('/v1/homeResi/:limit', (req, res) => {
+    const { limit } = req.params
+
+    resiQuery.getLimitResi(limit)
+    .then(data => res.json(data))
+    .catch(err => err.message)
+
+})
+
 router.get('/v1/comments/:id/:limit', (req, res) => {
     const { id, limit} = req.params
 

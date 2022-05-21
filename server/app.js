@@ -4,6 +4,7 @@ const express = require("express");
 const router = require("./router/router")
 const routerResi = require("./queries/resi/router")
 const routerPost = require("./queries/post/router")
+const routerProfile = require("./queries/profile/router")
 
 const fs = require("fs")
 const mysql = require("./db/dbConnect")
@@ -22,6 +23,7 @@ app.use(express.urlencoded({extended: false}));
 app.use('/api', router)
 app.use('/api', routerResi)
 app.use('/api', routerPost)
+app.use('/api', routerProfile)
 
 
 // insetRoom('C:\\Users\\emili\\Desktop\\MiResiResearchRooms.csv')

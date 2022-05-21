@@ -15,6 +15,15 @@ router.get('/v1/categories', (req, res)=>{
 })
 
 
+router.post('/v1/publishForum', (req, res) => {
+    const forumModel = req.body
+    console.log(forumModel)
+    forumQuery.publishForum(forumModel)
+    .then( data => res.json(data))
+    .catch(err => err.message)
+
+})
+
 router.get('/v1/forums', (req, res)=>{
     forumQuery.getForums()
     .then(data => res.json(data))
