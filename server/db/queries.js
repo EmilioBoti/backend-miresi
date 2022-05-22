@@ -30,7 +30,7 @@ const objt = {
         }
     },
     
-    getSingleUser: (id) => new Promise((resolve, reject)=>{
+    getSingleUser: (id) => new Promise((resolve, reject)=> {
         try {
             const query = `SELECT id, name, email, socketId,country, gender, age FROM users WHERE id = '${id}'`
     

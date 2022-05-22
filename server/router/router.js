@@ -14,29 +14,6 @@ router.get('/v1/categories', (req, res)=>{
     .catch(err => err.message)
 })
 
-
-router.post('/v1/publishForum', (req, res) => {
-    const forumModel = req.body
-    console.log(forumModel)
-    forumQuery.publishForum(forumModel)
-    .then( data => res.json(data))
-    .catch(err => err.message)
-
-})
-
-router.get('/v1/forums', (req, res)=>{
-    forumQuery.getForums()
-    .then(data => res.json(data))
-    .catch(err => err.message)
-})
-
-router.get('/v1/forums/:name', (req, res)=>{
-    const name = req.params.name
-    forumQuery.getFilterForums(name)
-    .then(data => res.json(data))
-    .catch(err => err.message)
-})
-
 router.get('/city/c/:search', (req, res)=> {
     const { search } = req.params
     
